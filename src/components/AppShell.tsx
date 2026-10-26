@@ -78,40 +78,75 @@ export const AppShell: React.FC = () => {
     },
   ]);
 
-  const [recentWorkspaces] = useState<RecentWorkspace[]>([
-    {
-      id: 'ws-1',
-      title: 'Startup Research',
-      description: 'Researching AI market opportunities & competitors.',
-      status: 'In progress',
-      timeInfo: 'In progress • 12 min',
-      category: 'research',
-    },
-    {
-      id: 'ws-2',
-      title: 'Website Builder',
-      description: 'Website planning and responsive design.',
+  const [recentWorkspaces, setRecentWorkspaces] = useState<RecentWorkspace[]>(() => {
+    try {
+      const stored = localStorage.getItem('sharthi_recent_workspaces');
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return [
+      {
+        id: 'ws-1',
+        title: 'Startup Research',
+        description: 'Researching AI market opportunities & competitors.',
+        status: 'In progress',
+        timeInfo: 'In progress • 12 min',
+        category: 'research',
+      },
+      {
+        id: 'ws-2',
+        title: 'Website Builder',
+        description: 'Website planning and responsive design.',
+        status: 'Completed',
+        timeInfo: 'Completed • 2 days ago',
+        category: 'builder',
+      },
+      {
+        id: 'ws-3',
+        title: 'Marketing Content',
+        description: 'Marketing copy, launch presentation and campaign assets.',
+        status: 'Completed',
+        timeInfo: 'Completed • 4 days ago',
+        category: 'marketing',
+      },
+      {
+        id: 'ws-4',
+        title: 'Code Assistant',
+        description: 'Coding, refactoring, and debugging workspace.',
+        status: 'In progress',
+        timeInfo: 'In progress • 1 hr',
+        category: 'code',
+      },
+    ];
+  });
+
+  const handleTaskCompleted = (taskTitle: string, taskResult?: string) => {
+    const category: RecentWorkspace['category'] = taskTitle.toLowerCase().includes('code')
+      ? 'code'
+      : taskTitle.toLowerCase().includes('create') || taskTitle.toLowerCase().includes('marketing')
+      ? 'marketing'
+      : taskTitle.toLowerCase().includes('build') || taskTitle.toLowerCase().includes('site')
+      ? 'builder'
+      : 'research';
+
+    const newWs: RecentWorkspace = {
+      id: `task-ws-${Date.now()}`,
+      title: taskTitle.length > 28 ? taskTitle.slice(0, 28) + '...' : taskTitle,
+      description: taskResult || 'Completed autonomous task by AdaL',
       status: 'Completed',
-      timeInfo: 'Completed • 2 days ago',
-      category: 'builder',
-    },
-    {
-      id: 'ws-3',
-      title: 'Marketing Content',
-      description: 'Marketing copy, launch presentation and campaign assets.',
-      status: 'Completed',
-      timeInfo: 'Completed • 4 days ago',
-      category: 'marketing',
-    },
-    {
-      id: 'ws-4',
-      title: 'Code Assistant',
-      description: 'Coding, refactoring, and debugging workspace.',
-      status: 'In progress',
-      timeInfo: 'In progress • 1 hr',
-      category: 'code',
-    },
-  ]);
+      timeInfo: 'Completed • Just now',
+      category,
+    };
+
+    setRecentWorkspaces((prev) => {
+      const updated = [newWs, ...prev.filter((w) => w.title !== newWs.title).slice(0, 7)];
+      try {
+        localStorage.setItem('sharthi_recent_workspaces', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
+    handleNotify('Saved to Recent Workspaces', `"${newWs.title}" added to your dashboard.`);
+  };
 
   const handleOpenRecentWorkspace = (ws: RecentWorkspace) => {
     if (ws.category === 'research') setActiveWorkspace('research');
@@ -256,6 +291,7 @@ export const AppShell: React.FC = () => {
           isCollapsed={isCompanionCollapsed}
           onToggleCollapse={() => setIsCompanionCollapsed(!isCompanionCollapsed)}
           userName={user.name ? user.name.split(' ')[0] : 'Akash'}
+          onTaskCompleted={handleTaskCompleted}
         />
       </div>
 

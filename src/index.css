@@ -2,16 +2,16 @@
 
 @layer base {
   :root {
-    --bg-main: #070B19;
-    --navy-deep: #0B1430;
-    --panel-bg: rgba(20, 35, 85, 0.65);
-    --glass-panel: rgba(70, 75, 160, 0.22);
-    --primary-blue: #248CFF;
+    --bg-main: #080D20;
+    --navy-deep: #111B46;
+    --panel-bg: rgba(75, 65, 160, 0.24);
+    --glass-panel: rgba(35, 80, 175, 0.22);
+    --primary-blue: #398BFF;
     --cyan: #18DDF5;
-    --electric-violet: #713BFF;
-    --magenta: #C044FF;
-    --text-main: #F8FAFF;
-    --text-sec: #BAC7E8;
+    --electric-violet: #8147FF;
+    --magenta: #C04CFF;
+    --text-main: #F7F8FF;
+    --text-sec: #BAC6E8;
     --text-muted: #8D9BBF;
   }
 
@@ -32,55 +32,50 @@
   }
 }
 
-/* Glassmorphism Classes */
+/* Glassmorphism Classes matching Screenshot 2 */
 .glass-panel {
-  background: rgba(24, 32, 75, 0.45);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+  background: rgba(28, 32, 80, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 32px 0 rgba(0, 0, 0, 0.35);
 }
 
 .glass-card {
-  background: rgba(40, 50, 110, 0.28);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(45, 52, 120, 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.28);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
-  background: rgba(55, 70, 140, 0.38);
-  border-color: rgba(24, 221, 245, 0.4);
+  background: rgba(60, 72, 150, 0.38);
+  border-color: rgba(24, 221, 245, 0.45);
   transform: translateY(-2px);
-  box-shadow: 0 14px 32px -4px rgba(24, 221, 245, 0.18), 0 8px 16px 0 rgba(0, 0, 0, 0.3);
-}
-
-.glass-card-active {
-  background: rgba(70, 85, 175, 0.42);
-  border-color: rgba(24, 221, 245, 0.55);
-  box-shadow: 0 0 20px rgba(36, 140, 255, 0.25);
+  box-shadow: 0 12px 28px -4px rgba(24, 221, 245, 0.16), 0 6px 14px 0 rgba(0, 0, 0, 0.25);
 }
 
 .glass-pill {
-  background: rgba(30, 42, 95, 0.5);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(38, 44, 105, 0.42);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.2s ease;
 }
 
 .glass-pill:hover {
-  background: rgba(45, 60, 125, 0.65);
+  background: rgba(52, 62, 135, 0.55);
   border-color: rgba(255, 255, 255, 0.25);
 }
 
 .glow-text-cyan {
-  text-shadow: 0 0 20px rgba(24, 221, 245, 0.6);
+  text-shadow: 0 0 18px rgba(24, 221, 245, 0.55);
 }
 
 .glow-text-purple {
-  text-shadow: 0 0 20px rgba(192, 68, 255, 0.6);
+  text-shadow: 0 0 18px rgba(192, 76, 255, 0.55);
 }
 
 /* Custom modern scrollbars */

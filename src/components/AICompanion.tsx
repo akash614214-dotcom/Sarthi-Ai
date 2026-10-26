@@ -37,6 +37,7 @@ interface AICompanionProps {
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
   userName?: string;
+  onTaskCompleted?: (taskTitle: string, taskResult?: string) => void;
 }
 
 export const AICompanion: React.FC<AICompanionProps> = ({
@@ -46,6 +47,7 @@ export const AICompanion: React.FC<AICompanionProps> = ({
   isCollapsed = false,
   onToggleCollapse,
   userName = 'Akash',
+  onTaskCompleted,
 }) => {
   const [messages, setMessages] = useState<CompanionMessage[]>([]);
   const [input, setInput] = useState('');
@@ -109,6 +111,10 @@ export const AICompanion: React.FC<AICompanionProps> = ({
       });
 
       setMessages((prev) => [...prev, companionMsg]);
+
+      if (response.actionTaken === 'sequential_subcommand_execution_completed') {
+        onTaskCompleted?.(response.taskPlan?.goal || textToSend, response.reply);
+      }
     } catch (err) {
       console.error('Companion error:', err);
     } finally {
