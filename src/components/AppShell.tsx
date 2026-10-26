@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { AICompanion } from './AICompanion';
@@ -15,6 +15,7 @@ import { CommandPalette } from './CommandPalette';
 import { NotificationsPopover } from './NotificationsPopover';
 import { ApprovalDialog } from './ApprovalDialog';
 import { AuthModal } from './AuthModal';
+import { LoginScreen } from './LoginScreen';
 import { WorkspaceType, RecentWorkspace, AppNotification, UserProfile } from '../types';
 
 export const AppShell: React.FC = () => {
@@ -39,13 +40,23 @@ export const AppShell: React.FC = () => {
     onConfirm: () => {},
   });
 
-  const [user, setUser] = useState<UserProfile>({
-    name: 'Akash Sharma',
-    initials: 'AS',
-    email: 'akash@sharthi.ai',
-    role: 'Pro Member',
-    plan: 'Autonomous Tier',
-    isAuthenticated: true,
+  // User auth state: compulsory login required before accessing browser workspace
+  const [user, setUser] = useState<UserProfile>(() => {
+    try {
+      const saved = localStorage.getItem('sarthi_auth_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.isAuthenticated) return parsed;
+      }
+    } catch {}
+    return {
+      name: '',
+      initials: '',
+      email: '',
+      role: '',
+      plan: '',
+      isAuthenticated: false,
+    };
   });
 
   const [notifications, setNotifications] = useState<AppNotification[]>([
@@ -122,24 +133,30 @@ export const AppShell: React.FC = () => {
   };
 
   const handleSignOut = () => {
+    localStorage.removeItem('sarthi_auth_user');
     setUser({
-      name: 'Guest User',
-      initials: 'GU',
+      name: '',
+      initials: '',
       email: '',
-      role: 'Guest',
-      plan: 'Free Tier',
+      role: '',
+      plan: '',
       isAuthenticated: false,
     });
-    handleNotify('Signed Out', 'You are now browsing in guest mode.');
   };
 
   const handleAuthSuccess = (updatedUser: UserProfile) => {
     setUser(updatedUser);
+    localStorage.setItem('sarthi_auth_user', JSON.stringify(updatedUser));
     handleNotify(
       'Authentication Successful',
-      `Welcome back, ${updatedUser.name}! Your workspace is active.`
+      `Welcome ${updatedUser.name}! Sarthi Browser is unlocked.`
     );
   };
+
+  // Compulsory Login Check: If user is not authenticated, show full-screen Login Screen!
+  if (!user.isAuthenticated) {
+    return <LoginScreen onLoginSuccess={handleAuthSuccess} />;
+  }
 
   const renderActiveWorkspace = () => {
     switch (activeWorkspace) {
@@ -215,7 +232,7 @@ export const AppShell: React.FC = () => {
 
         {/* Central Workspace Canvas */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {/* Top Utility Bar (Supabase pill removed, Auth Sign In / Sign Up added) */}
+          {/* Top Utility Bar */}
           <TopBar
             onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
             onToggleNotifications={() => setIsNotificationsOpen(!isNotificationsOpen)}
@@ -238,11 +255,11 @@ export const AppShell: React.FC = () => {
         <AICompanion
           isCollapsed={isCompanionCollapsed}
           onToggleCollapse={() => setIsCompanionCollapsed(!isCompanionCollapsed)}
-          userName={user.name.split(' ')[0]}
+          userName={user.name ? user.name.split(' ')[0] : 'Akash'}
         />
       </div>
 
-      {/* Sign In & Sign Up Modal */}
+      {/* Sign In & Sign Up Modal (for switching accounts) */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
