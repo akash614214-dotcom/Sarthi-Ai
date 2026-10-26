@@ -1,0 +1,251 @@
+import React, { useState } from 'react';
+import { Sidebar } from './Sidebar';
+import { TopBar } from './TopBar';
+import { AICompanion } from './AICompanion';
+import { HomeDashboard } from './workspaces/HomeDashboard';
+import { BrowserWorkspace } from './workspaces/BrowserWorkspace';
+import { ResearchWorkspace } from './workspaces/ResearchWorkspace';
+import { CreateWorkspace } from './workspaces/CreateWorkspace';
+import { CodeWorkspace } from './workspaces/CodeWorkspace';
+import { TasksWorkspace } from './workspaces/TasksWorkspace';
+import { LibraryWorkspace } from './workspaces/LibraryWorkspace';
+import { HistoryWorkspace } from './workspaces/HistoryWorkspace';
+import { SettingsWorkspace } from './workspaces/SettingsWorkspace';
+import { CommandPalette } from './CommandPalette';
+import { NotificationsPopover } from './NotificationsPopover';
+import { ApprovalDialog } from './ApprovalDialog';
+import { WorkspaceType, RecentWorkspace, AppNotification, UserProfile } from '../types';
+import { isSupabaseConfigured } from '../lib/supabase';
+
+export const AppShell: React.FC = () => {
+  const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceType>('home');
+  const [isCompanionCollapsed, setIsCompanionCollapsed] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [approvalModal, setApprovalModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    consequence: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    consequence: '',
+    onConfirm: () => {},
+  });
+
+  const [user] = useState<UserProfile>({
+    name: 'Akash Sharma',
+    initials: 'AS',
+    email: 'akash@sharthi.ai',
+    role: 'Pro Member',
+    plan: 'Autonomous Tier',
+  });
+
+  const [notifications, setNotifications] = useState<AppNotification[]>([
+    {
+      id: 'notif-1',
+      title: 'Autonomous Research Verified',
+      message: 'Neural Networks synthesis completed and indexed to Supabase.',
+      time: '5m ago',
+      read: false,
+      type: 'success',
+    },
+    {
+      id: 'notif-2',
+      title: 'Supabase Vector Memory Synced',
+      message: '4 new document embeddings stored with 1536-dim vector weights.',
+      time: '25m ago',
+      read: false,
+      type: 'info',
+    },
+  ]);
+
+  const [recentWorkspaces] = useState<RecentWorkspace[]>([
+    {
+      id: 'ws-1',
+      title: 'Startup Research',
+      description: 'Researching AI market opportunities & competitors.',
+      status: 'In progress',
+      timeInfo: 'In progress • 12 min',
+      category: 'research',
+    },
+    {
+      id: 'ws-2',
+      title: 'Website Builder',
+      description: 'Website planning and responsive design.',
+      status: 'Completed',
+      timeInfo: 'Completed • 2 days ago',
+      category: 'builder',
+    },
+    {
+      id: 'ws-3',
+      title: 'Marketing Content',
+      description: 'Marketing copy, launch presentation and campaign assets.',
+      status: 'Completed',
+      timeInfo: 'Completed • 4 days ago',
+      category: 'marketing',
+    },
+    {
+      id: 'ws-4',
+      title: 'Code Assistant',
+      description: 'Coding, refactoring, and debugging workspace.',
+      status: 'In progress',
+      timeInfo: 'In progress • 1 hr',
+      category: 'code',
+    },
+  ]);
+
+  const handleOpenRecentWorkspace = (ws: RecentWorkspace) => {
+    if (ws.category === 'research') setActiveWorkspace('research');
+    else if (ws.category === 'code') setActiveWorkspace('code');
+    else if (ws.category === 'marketing' || ws.category === 'builder') setActiveWorkspace('create');
+    else setActiveWorkspace('browser');
+  };
+
+  const handleNotify = (title: string, message: string) => {
+    const newNotif: AppNotification = {
+      id: `notif-${Date.now()}`,
+      title,
+      message,
+      time: 'Just now',
+      read: false,
+      type: 'success',
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
+  };
+
+  const renderActiveWorkspace = () => {
+    switch (activeWorkspace) {
+      case 'home':
+        return (
+          <HomeDashboard
+            onSelectWorkspace={setActiveWorkspace}
+            recentWorkspaces={recentWorkspaces}
+            onOpenRecentWorkspace={handleOpenRecentWorkspace}
+            onOpenResearchComposer={() => setActiveWorkspace('research')}
+            onOpenCreateComposer={() => setActiveWorkspace('create')}
+            onOpenCodeWorkspace={() => setActiveWorkspace('code')}
+          />
+        );
+      case 'browser':
+        return (
+          <BrowserWorkspace
+            onAskCompanion={(prompt) => {
+              // companion handles it
+            }}
+          />
+        );
+      case 'research':
+        return <ResearchWorkspace />;
+      case 'create':
+        return <CreateWorkspace />;
+      case 'code':
+        return <CodeWorkspace />;
+      case 'tasks':
+        return <TasksWorkspace />;
+      case 'library':
+        return <LibraryWorkspace />;
+      case 'history':
+        return <HistoryWorkspace />;
+      case 'settings':
+        return <SettingsWorkspace onNotify={handleNotify} />;
+      default:
+        return (
+          <HomeDashboard
+            onSelectWorkspace={setActiveWorkspace}
+            recentWorkspaces={recentWorkspaces}
+            onOpenRecentWorkspace={handleOpenRecentWorkspace}
+            onOpenResearchComposer={() => setActiveWorkspace('research')}
+            onOpenCreateComposer={() => setActiveWorkspace('create')}
+            onOpenCodeWorkspace={() => setActiveWorkspace('code')}
+          />
+        );
+    }
+  };
+
+  return (
+    <div className="relative w-screen h-screen overflow-hidden flex items-center justify-center p-3 select-none">
+      {/* Cinematic Mountain Sunset Backdrop with Overlay */}
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0 transition-all duration-700"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 50% 30%, rgba(113, 59, 255, 0.25) 0%, rgba(7, 11, 25, 0.85) 75%),
+            linear-gradient(to bottom, rgba(7, 11, 25, 0.4) 0%, rgba(7, 11, 25, 0.75) 100%),
+            url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2560&auto=format&fit=crop')
+          `,
+          backgroundColor: '#070B19',
+        }}
+      />
+
+      {/* Main Glass Shell Container */}
+      <div className="relative z-10 w-full h-full rounded-[28px] border border-white/15 bg-gradient-to-b from-[#142355]/40 via-[#0B1430]/60 to-[#070B19]/80 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] flex gap-3 p-3 overflow-hidden">
+        {/* Left Navigation Sidebar */}
+        <Sidebar
+          activeWorkspace={activeWorkspace}
+          onSelectWorkspace={setActiveWorkspace}
+        />
+
+        {/* Central Workspace Canvas */}
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
+          {/* Top Utility Bar */}
+          <TopBar
+            onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+            onToggleNotifications={() => setIsNotificationsOpen(!isNotificationsOpen)}
+            unreadNotificationsCount={notifications.filter((n) => !n.read).length}
+            isSupabaseConnected={isSupabaseConfigured()}
+            onOpenSupabaseSettings={() => setActiveWorkspace('settings')}
+            user={user}
+          />
+
+          {/* Central Workspace Content Area */}
+          <main className="flex-1 overflow-hidden flex flex-col">
+            {renderActiveWorkspace()}
+          </main>
+        </div>
+
+        {/* Right Floating AI Companion Panel */}
+        <AICompanion
+          isCollapsed={isCompanionCollapsed}
+          onToggleCollapse={() => setIsCompanionCollapsed(!isCompanionCollapsed)}
+          userName={user.name.split(' ')[0]}
+        />
+      </div>
+
+      {/* Floating Command Palette (Cmd + K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onSelectWorkspace={setActiveWorkspace}
+        onExecutePrompt={(prompt) => {
+          handleNotify('Prompt Submitted', `AdaL received: "${prompt}"`);
+        }}
+      />
+
+      {/* Notifications Popover */}
+      <NotificationsPopover
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+        notifications={notifications}
+        onClear={() => setNotifications([])}
+      />
+
+      {/* Approval Dialog for Sensitive Actions */}
+      <ApprovalDialog
+        isOpen={approvalModal.isOpen}
+        title={approvalModal.title}
+        actionDescription={approvalModal.description}
+        consequence={approvalModal.consequence}
+        onApprove={() => {
+          approvalModal.onConfirm();
+          setApprovalModal({ ...approvalModal, isOpen: false });
+        }}
+        onCancel={() => setApprovalModal({ ...approvalModal, isOpen: false })}
+      />
+    </div>
+  );
+};
+
