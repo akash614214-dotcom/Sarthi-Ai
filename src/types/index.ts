@@ -45,6 +45,7 @@ export interface UserProfile {
   email: string;
   role: string;
   plan: string;
+  isAuthenticated: boolean;
 }
 
 export interface BrowserTab {

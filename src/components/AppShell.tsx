@@ -14,14 +14,17 @@ import { SettingsWorkspace } from './workspaces/SettingsWorkspace';
 import { CommandPalette } from './CommandPalette';
 import { NotificationsPopover } from './NotificationsPopover';
 import { ApprovalDialog } from './ApprovalDialog';
+import { AuthModal } from './AuthModal';
 import { WorkspaceType, RecentWorkspace, AppNotification, UserProfile } from '../types';
-import { isSupabaseConfigured } from '../lib/supabase';
 
 export const AppShell: React.FC = () => {
   const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceType>('home');
   const [isCompanionCollapsed, setIsCompanionCollapsed] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+
   const [approvalModal, setApprovalModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -36,26 +39,27 @@ export const AppShell: React.FC = () => {
     onConfirm: () => {},
   });
 
-  const [user] = useState<UserProfile>({
+  const [user, setUser] = useState<UserProfile>({
     name: 'Akash Sharma',
     initials: 'AS',
     email: 'akash@sharthi.ai',
     role: 'Pro Member',
     plan: 'Autonomous Tier',
+    isAuthenticated: true,
   });
 
   const [notifications, setNotifications] = useState<AppNotification[]>([
     {
       id: 'notif-1',
       title: 'Autonomous Research Verified',
-      message: 'Neural Networks synthesis completed and indexed to Supabase.',
+      message: 'Neural Networks synthesis completed and indexed to memory.',
       time: '5m ago',
       read: false,
       type: 'success',
     },
     {
       id: 'notif-2',
-      title: 'Supabase Vector Memory Synced',
+      title: 'Vector Memory Synced',
       message: '4 new document embeddings stored with 1536-dim vector weights.',
       time: '25m ago',
       read: false,
@@ -117,6 +121,26 @@ export const AppShell: React.FC = () => {
     setNotifications((prev) => [newNotif, ...prev]);
   };
 
+  const handleSignOut = () => {
+    setUser({
+      name: 'Guest User',
+      initials: 'GU',
+      email: '',
+      role: 'Guest',
+      plan: 'Free Tier',
+      isAuthenticated: false,
+    });
+    handleNotify('Signed Out', 'You are now browsing in guest mode.');
+  };
+
+  const handleAuthSuccess = (updatedUser: UserProfile) => {
+    setUser(updatedUser);
+    handleNotify(
+      'Authentication Successful',
+      `Welcome back, ${updatedUser.name}! Your workspace is active.`
+    );
+  };
+
   const renderActiveWorkspace = () => {
     switch (activeWorkspace) {
       case 'home':
@@ -134,7 +158,7 @@ export const AppShell: React.FC = () => {
         return (
           <BrowserWorkspace
             onAskCompanion={(prompt) => {
-              // companion handles it
+              handleNotify('Companion Alert', `Processing browser query: "${prompt}"`);
             }}
           />
         );
@@ -191,14 +215,17 @@ export const AppShell: React.FC = () => {
 
         {/* Central Workspace Canvas */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {/* Top Utility Bar */}
+          {/* Top Utility Bar (Supabase pill removed, Auth Sign In / Sign Up added) */}
           <TopBar
             onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
             onToggleNotifications={() => setIsNotificationsOpen(!isNotificationsOpen)}
             unreadNotificationsCount={notifications.filter((n) => !n.read).length}
-            isSupabaseConnected={isSupabaseConfigured()}
-            onOpenSupabaseSettings={() => setActiveWorkspace('settings')}
             user={user}
+            onOpenAuthModal={(mode) => {
+              setAuthMode(mode);
+              setIsAuthModalOpen(true);
+            }}
+            onSignOut={handleSignOut}
           />
 
           {/* Central Workspace Content Area */}
@@ -214,6 +241,14 @@ export const AppShell: React.FC = () => {
           userName={user.name.split(' ')[0]}
         />
       </div>
+
+      {/* Sign In & Sign Up Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+        initialMode={authMode}
+      />
 
       {/* Floating Command Palette (Cmd + K) */}
       <CommandPalette
@@ -248,4 +283,3 @@ export const AppShell: React.FC = () => {
     </div>
   );
 };
-
