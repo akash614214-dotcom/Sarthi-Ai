@@ -160,9 +160,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{
           backgroundImage: `
-            radial-gradient(circle at 50% 30%, rgba(113, 59, 255, 0.3) 0%, rgba(7, 11, 25, 0.88) 75%),
-            linear-gradient(to bottom, rgba(7, 11, 25, 0.45) 0%, rgba(7, 11, 25, 0.85) 100%),
-            url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2560&auto=format&fit=crop')
+            radial-gradient(circle at 50% 30%, rgba(113, 59, 255, 0.2) 0%, rgba(7, 11, 25, 0.6) 80%),
+            linear-gradient(to bottom, rgba(7, 11, 25, 0.25) 0%, rgba(7, 11, 25, 0.7) 100%),
+            url('/mountain-sunset.jpg')
           `,
           backgroundColor: '#070B19',
         }}
@@ -411,3 +411,4 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
     </div>
   );
 };
+

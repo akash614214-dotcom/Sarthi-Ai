@@ -114,12 +114,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               Bigger dreams.
             </p>
           </div>
-          <div className="w-8 h-8 rounded-lg overflow-hidden border border-purple-400/30 shadow-md shadow-purple-500/20">
+          <div className="w-10 h-8 rounded-lg overflow-hidden border border-purple-400/30 shadow-md shadow-purple-500/20 relative shrink-0">
             <img
-              src="/sharthi-logo.png"
-              alt="Orb"
+              src="/mountain-sunset.jpg"
+              alt="Landscape"
               className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
             />
+            <div className="absolute inset-0 bg-purple-500/10" />
           </div>
         </div>
       </div>

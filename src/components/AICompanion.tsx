@@ -175,24 +175,22 @@ export const AICompanion: React.FC<AICompanionProps> = ({
           </div>
         </div>
 
-        {/* 5 Suggested Action Buttons */}
-        {messages.length === 0 && (
-          <div className="mt-3 space-y-1.5">
-            {SUGGESTED_PROMPTS.map((prompt, idx) => {
-              const Icon = prompt.icon;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => handleSend(prompt.label)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl glass-pill text-[12px] text-[#BAC7E8] hover:text-white hover:border-cyan-400/40 transition duration-200 text-left group"
-                >
-                  <Icon size={14} className="text-[#8D9BBF] group-hover:text-cyan-300 transition" />
-                  <span className="truncate">{prompt.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
+        {/* 5 Suggested Action Buttons matching screenshot */}
+        <div className="mt-3 space-y-1.5">
+          {SUGGESTED_PROMPTS.map((prompt, idx) => {
+            const Icon = prompt.icon;
+            return (
+              <button
+                key={idx}
+                onClick={() => handleSend(prompt.label)}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl glass-pill text-[12px] text-[#BAC7E8] hover:text-white hover:border-cyan-400/40 transition duration-200 text-left group"
+              >
+                <Icon size={14} className="text-[#8D9BBF] group-hover:text-cyan-300 transition shrink-0" />
+                <span className="truncate">{prompt.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
         {/* Autonomous Task Stepper Card (Visible when running a task) */}
         {activePlan && (

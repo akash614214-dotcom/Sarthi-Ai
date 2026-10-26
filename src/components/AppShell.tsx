@@ -214,16 +214,16 @@ export const AppShell: React.FC = () => {
         className="absolute inset-0 bg-cover bg-center z-0 transition-all duration-700"
         style={{
           backgroundImage: `
-            radial-gradient(circle at 50% 30%, rgba(113, 59, 255, 0.25) 0%, rgba(7, 11, 25, 0.85) 75%),
-            linear-gradient(to bottom, rgba(7, 11, 25, 0.4) 0%, rgba(7, 11, 25, 0.75) 100%),
-            url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2560&auto=format&fit=crop')
+            radial-gradient(circle at 50% 25%, rgba(113, 59, 255, 0.15) 0%, rgba(7, 11, 25, 0.45) 85%),
+            linear-gradient(to bottom, rgba(7, 11, 25, 0.15) 0%, rgba(7, 11, 25, 0.55) 100%),
+            url('/mountain-sunset.jpg')
           `,
           backgroundColor: '#070B19',
         }}
       />
 
       {/* Main Glass Shell Container */}
-      <div className="relative z-10 w-full h-full rounded-[28px] border border-white/15 bg-gradient-to-b from-[#142355]/40 via-[#0B1430]/60 to-[#070B19]/80 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] flex gap-3 p-3 overflow-hidden">
+      <div className="relative z-10 w-full h-full rounded-[28px] border border-white/20 bg-[#0B1430]/25 backdrop-blur-[10px] shadow-[0_20px_60px_rgba(0,0,0,0.6)] flex gap-3 p-3 overflow-hidden">
         {/* Left Navigation Sidebar */}
         <Sidebar
           activeWorkspace={activeWorkspace}
